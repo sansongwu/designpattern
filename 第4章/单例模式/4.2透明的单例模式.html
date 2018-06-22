@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    /*创建唯一的div节点*/
+    var CreateDiv = (function () {
+        var instance
+        var CreateDiv = function (html) {
+            if(instance){
+                return instance
+            }
+            this.html = html
+            this.init()
+            /*没了这句话 就不是单例*/
+            return instance = this
+        }
+        CreateDiv.prototype.init = function () {
+            var div = document.createElement('div')
+            div.innerHTML = this.html
+            document.body.appendChild(div)
+        }
+
+        return CreateDiv
+    })()
+    var a = new CreateDiv('seven')
+    var b = new CreateDiv('seven2')
+    console.log(a===b)
+</script>

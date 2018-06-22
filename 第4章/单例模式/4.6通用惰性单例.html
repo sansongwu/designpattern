@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .test{
+            background-color: yellow;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test" id="btn"></div>
+</body>
+</html>
+<script>
+    /*创建DIV的函数*/
+    function createDiv() {
+        var div = document.createElement('div')
+        div.innerHTML = 'html'
+        div.style.height = '20px'
+        div.style.width = '20px'
+        div.style.backgroundColor = 'red'
+        div.style.display = 'none'
+        document.body.appendChild(div)
+        return div
+    }
+    /*创建iframe的函数*/
+    function createIframe() {
+        var iframe = document.createElement('iframe')
+        document.body.appendChild(iframe)
+        /*这里一定要return*/
+        return iframe
+    }
+    /*控制单例*/
+    function getSingle(fn) {
+        var result
+        return function () {
+            return result || (result = fn.apply(this,arguments))
+        }
+    }
+    /*使用单例方法 创建div*/
+    var createSingle = getSingle(createDiv)
+    document.onclick = function () {
+        console.log('clicked')
+        var div = createSingle()
+        div.style.display = 'block'
+    }
+    /*使用单例方法 创建iframe*/
+    var createSingle2 = getSingle(createIframe)
+    document.getElementById('btn').onclick = function () {
+        createSingle2()
+    }
+</script>

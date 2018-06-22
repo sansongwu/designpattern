@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>登录</title>
+		<link href="css/lib/bootstrap/bootstrap.css" rel="stylesheet">
+		<link href="css/index.css" rel="stylesheet">
+		<link rel="stylesheet" href="css/dialog.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script type="text/javascript" src="cordova.js"></script>
+		<script src="js/lib/jQuery/jquery-3.1.1.min.js"></script>
+		<script src="js/lib/bootstrap/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/dialog.js"></script>
+		<script type="text/javascript" src="js/index.js"></script>
+		<script type="text/javascript" src="js/platform.js"></script>
+		<style type="text/css">
+			.container-fluid {
+				background-color: #fff;
+			}
+			
+			body {
+				position: absolute;
+				top: 0;
+			}
+			
+			#entry_pwd {
+				float: right;
+				width: 90%;
+				height: 0.36rem;
+				font-size: 0.16rem;
+				display: inline-block;
+				border: none;
+				outline: none;
+			}
+			
+			#entry_pwd img {
+				margin-top: 0.05rem;
+			}
+			
+			#show_pwd {
+				color: darkgray;
+			}
+		</style>
+		<script type="text/javascript">
+			var maxCount = 0;
+			var imgSrc = '';
+			var pwdVal = '';
+			$(function() {
+				sessionStorage.removeItem("phone");
+				pageReady(function() {
+					var account_id = localStorage.getItem("account_id");
+					pwdVal = localStorage.getItem("account_pwd");
+					if(account_id !== null && account_id !== "") {
+						$("#userid").val(account_id);
+					}
+					
+					if(pwdVal !==null && pwdVal !==""){
+						$("#entry_pwd").val(pwdVal);
+						$("#show_pwd").css("color", "black");
+					}else{
+						pwdVal = '';
+					}
+					
+					if(isNative) {
+						if(platform == 2) {
+							imgSrc = "img/cursor-1.gif";
+							$("#entry_pwd").css("padding-left", "0.08rem");
+						} else {
+							imgSrc = "img/cursor.gif";
+						}
+					} else {
+						$("#entry_pwd").attr("contenteditable", "true");
+						$("#show_pwd").html("");
+					}
+
+					$(".logo_mark").css("margin-top", top.topmargin + "rem");
+					$("#userid,#img_verify_code").on("focus", function() {
+						var id = $(this).attr("id");
+						imgChange(id);
+						if(platform == 1) {
+							setTimeout(function() {
+								document.getElementById("submit").scrollIntoView();
+							}, 300);
+						}
+					});
+					$("#userid,#img_verify_code").on("blur", function() {
+						var id = $(this).attr("id");
+						imgReturn(id);
+					});
+
+					$("#entry_pwd").click(function(e) {
+						$("#entry_pwd").focus();
+					});
+
+					$("#entry_pwd").focusin(function(e) {
+						//cleanEvent(e);
+						imgChange("entry_pwd");
+						if(isNative) {
+							//showKeyboard();
+							$("body").css("top", "-100px");
+							$("#entry_pwd img").css("display", "inline-block");
+							$("#entry_pwd img").attr("src", imgSrc);
+							/*if(pwdVal.length == 0) {
+								$("#show_pwd").html("");
+								$("#show_pwd").css("color", "black");
+							}*/
+						}
+					});
+
+					$("#entry_pwd").focusout(function(e) {
+						//cleanEvent(e);
+						imgReturn("entry_pwd");
+						if(isNative) {
+							//hideKeyboard();
+							$("body").css("top", "0");
+							$("#entry_pwd img").css("display", "none");
+							/*if(pwdVal.length == 0) {
+								$("#show_pwd").html("请输入用户密码");
+								$("#show_pwd").css("color", "darkgray");
+							}*/
+						}
+
+					});
+
+					$("#submit").bind("touchend", function() {
+						console.log("登录");
+						var userid = $("#userid").val();
+						var entry_pwd;
+						if(isNative) {
+							entry_pwd = $("#entry_pwd").val();
+							//hideKeyboard();
+						} else {
+							entry_pwd = $("#entry_pwd").val().trim();
+						}
+						var img_verify_code = $("#img_verify_code").val();
+						if(!userid || !entry_pwd) {
+							showdialog1('请输入用户名和密码', ["确定"]);
+						} else if(maxCount && !img_verify_code) {
+							showdialog1('请输入图形验证码', ["确定"]);
+						} else {
+							sessionStorage.userid = userid;
+							sessionStorage.entry_pwd = entry_pwd;
+							sessionStorage.img_verify_code = img_verify_code;
+							var obj = {
+								"userid": userid,
+								"entry_pwd": entry_pwd,
+								"img_verify_code": img_verify_code
+							}
+							httpRequest(obj, 'LOG000001', 0, function(result) {
+								setParam('userInfo', result.data.accountInfo);
+								localStorage.setItem("account_id", result.data.accountInfo.account_id);
+								localStorage.setItem("account_pwd", pwdVal);
+								sessionStorage.username = result.data.accountInfo.account_name;
+								sessionStorage.account_id = result.data.accountInfo.account_id;
+								sessionStorage.orglv1 = result.data.orglv1;
+								sessionStorage.phone = result.data.phone;
+								sessionStorage.device_id = result.data.device_id;
+								sessionStorage.platform = result.data.platform;
+								sessionStorage.photo = result.data.accountInfo.photo;
+								sessionStorage.orglv1name=result.data.orglv1name;
+								document.location.href="index.html";
+
+								//alert(JSON.stringify(result));
+							}, function(ermsg) {
+								console.log("登录失败");
+								if(ermsg.tips.message) {
+									if(ermsg.tips.message.indexOf("Maximum sessions of 1 for this principal exceeded") > -1) {
+										showdialog1("用户已在另一台设备登录", ["确定"]);
+									} else if(ermsg.tips.message.indexOf("图形验证") > -1) {
+										if(ermsg.tips.message.indexOf("没有找到图形验证码") > -1) {
+											showdialog1("验证码错误，请重新输入", ["确定"], function() {
+												getCode();
+											});
+										} else {
+											if(img_verify_code && ermsg.tips.message.indexOf("错误次数达到最大次数") > -1) {
+												showdialog1("密码错误，请重新输入", ["确定"], function() {
+													$("#entry_pwd").val("");
+													getCode();
+												});
+											} else {
+												showdialog1(ermsg.tips.message, ["确定"], function() {
+													getCode();
+												});
+											}
+										}
+									} else if(ermsg.tips.message.indexOf("检测到您已更换设备")>-1){
+										var terrcode=ermsg.tips.terrcode;
+										var str=terrcode.split(",");
+										sessionStorage.phone=str[0];
+										sessionStorage.device_id=str[1];
+										showdialog1(ermsg.tips.message, ["确定"],function(){
+											location.href="phoneBindchange.html";
+										});
+										}else{
+											showdialog1(ermsg.tips.message, ["确定"]);
+										}
+								}
+							}, 'login');
+						}
+					});
+
+					$("#forgetPwd").bind("click", function() {
+						location.href = "phoneBindForget.html";
+					});
+				})
+			});
+			(function(doc, win) {
+				var docE1 = doc.documentElement,
+					resizeEvt = 'orienttationchange' in window ? 'orientationchange' : 'resize',
+					recalc = function() {
+						var clientWidth = docE1.clientWidth;
+						if(!clientWidth) return;
+						if(clientWidth >= 375) {
+							docE1.style.fontSize = "100px";
+						} else {
+							docE1.style.fontSize = 100 * (clientWidth / 375) + 'px';
+						}
+					};
+				if(!doc.addEventListener) return;
+				win.addEventListener(resizeEvt, recalc, false);
+				doc.addEventListener('DOMContentLoaded', recalc, false);
+			})(document, window);
+			
+			
+			function getCode() {
+				httpRequest("", 'code001', 0, function(res) {
+					$("#img_verify_code").val('');
+					$(".code_input").show();
+					$(".img_code").html('<img src="data:image/jpeg;base64,' + res.data.verimage + '"/>');
+					maxCount = 1;
+				}, function(er) {
+					console.log(er)
+				}, "code");
+			}
+
+			function imgChange(id) {
+				var img = $("#" + id).siblings("img").attr("src").split(".")[0];
+				if(img.indexOf("-1") == -1) {
+					$("#" + id).siblings("img").attr("src", img + "-1.png");
+				}
+			}
+
+			function imgReturn(id) {
+				var imgArr = $("#" + id).siblings("img").attr("src").split("-");
+				if(imgArr.length > 1) {
+					$("#" + id).siblings("img").attr("src", imgArr[0] + ".png");
+				}
+			}
+
+			function pwdReturn(pwd) {
+				var pwdStr = "";
+				for(var i = 0; i < pwd.length; i++) {
+					pwdStr += "●";
+				}
+				return pwdStr;
+			}
+			// 调取键盘
+			function showKeyboard() {
+				top.NTKeyboard.showKeyboard(function(res) {
+					if(res == "delete") {
+						pwdVal = pwdVal.substring(0, pwdVal.length - 1);
+					} else if(res == "finish") {
+						$("#entry_pwd").blur();
+						if(pwdVal.length == 0) {
+							$("#show_pwd").html("请输入用户密码");
+							$("#show_pwd").css("color", "darkgray");
+						}
+						return;
+					} else {
+						pwdVal += res;
+					}
+
+					$("#show_pwd").html(pwdReturn(pwdVal));
+
+				}, function(er) {
+					console.log(er);
+				}, 1, 0);
+			}
+			// 隐藏键盘
+			function hideKeyboard() {
+				top.NTKeyboard.hideKeyboard(function(res) {}, function(er) {
+					console.log(er);
+				});
+			}
+		</script>
+	</head>
+
+	<body>
+		<div class="top_bar">
+
+		</div>
+		<div class="container-fluid">
+			<div class="row">
+				<!--<div class="col-xs-12 logo_pic">
+					<img src="img/logo.png" />
+				</div>-->
+			</div>
+			<div class="row">
+				<div class="col-xs-12 logo_mark">
+					<img src="img/icon.jpg" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 login_input">
+					<img src="img/user.png" />
+					<input type="text" name="" id="userid" value="" placeholder="请输入账号/手机号码" />
+				</div>
+				<div class="col-xs-12 login_input login_input_2">
+					<img src="img/pwd.png" />
+					<input type="password" name="" id="entry_pwd" value="" placeholder="请输入用户密码" style="background-position-x: 0" />
+
+					<!--<div tabindex="0" id="entry_pwd">
+						<span id="show_pwd">请输入用户密码</span>
+						<img id="img_pwd" src="img/cursor.gif" style="display:none;" />
+					</div>-->
+				</div>
+
+				<div class="col-xs-12 login_input code_input login_input_2">
+					<img src="img/code.png" />
+					<div class="img_code">
+
+					</div>
+					<input type="search" name="" id="img_verify_code" value="" placeholder="请输入图形验证码" style="width:50%;" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="login-btn" id="submit">
+						登录
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="forget_pwd" id="forgetPwd">
+						忘记密码
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

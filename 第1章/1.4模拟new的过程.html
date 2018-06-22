@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var Person = function (name) {
+        this.name = name
+    }
+    Person.prototype.getName = function () {
+        console.log(this.name)
+    }
+
+    var objectFatory = function () {
+        //创建一个空对象
+        var obj = new Object()
+        //获取第一个参数  即构造函数(构造器)   ！这一操作 使得arguments对象的第一项被移除！
+        var Constructor = [].shift.call(arguments);
+        //修改空对象的隐式原型  使其指向构造器函数 的 显式原型
+        obj.__proto__ = Constructor.prototype;
+        //将构造器的方法 属性 赋值给obj
+        var ret = Constructor.apply(obj,arguments)
+        console.log(obj)
+        console.log(typeof ret === 'Object')
+        //返回对象
+        return typeof ret === 'Object' ? ret : obj
+    }
+    var a = objectFatory(Person,'jack')
+    console.log(a.name)
+    a.getName()
+</script>

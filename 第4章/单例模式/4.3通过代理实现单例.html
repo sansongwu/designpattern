@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    /*4.2基础上 通过代理 实现单例*/
+    CreateDiv = function (html) {
+        this.init()
+        this.html = html
+    }
+    CreateDiv.prototype.init = function () {
+        var div = document.createElement('div')
+        div.innerHTML = this.innerHTML
+        document.body.appendChild(div)
+    }
+
+    /*引入代理类*/
+    var ProxySingletonCreateDiv = (function () {
+        var instance
+        return function (html) {
+            if(!instance){
+                instance = new CreateDiv(html)
+            }
+            /*此时instance作为CreateDiv的实例 是一个对象  一个构造函数 返回的是一个对象 */
+            return instance
+        }
+    })()
+    /*一个构造函数 返回的是一个对象 那么new出来的结果就是这个对象*/
+    var a = new ProxySingletonCreateDiv('seven1')
+    var b = new ProxySingletonCreateDiv('seven2')
+    console.log(a===b)
+</script>

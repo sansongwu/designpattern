@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var obj = {}
+    var foo = function (name,tar) {
+        var part = name.split('.')
+        /*记录当前的根对象*/
+        var current = tar
+        for(var i in part){
+            if(!current[part[i]]){
+                /*如果当前的根对象不存在key  创建新key value为一个空对象*/
+                current[part[i]] = {}
+            }
+            /*修改根对象指向 向里进一级*/
+            current = current[part[i]]
+        }
+    }
+    console.log(obj)
+    foo('a.b.c.d',obj)
+</script>

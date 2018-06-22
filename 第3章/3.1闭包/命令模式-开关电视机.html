@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #open{
+            width: 200px;
+            height: 200px;
+            background-color: green;
+        }
+        #close{
+            width: 200px;
+            height: 200px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+<div id="open"></div>
+<div id="close"></div>
+</body>
+</html>
+<script>
+    var Tv = {
+        open:function () {
+            console.log('开启电视')
+        },
+        close:function () {
+            console.log('关闭电视')
+        }
+    }
+    /*封装请求*/
+    var Opt = function (receiver) {
+        this.receiver = receiver
+    }
+    Opt.prototype.open = function () {
+        this.receiver.open()
+    }
+    Opt.prototype.close = function () {
+        this.receiver.close()
+    }
+
+    var setCommand = function (command) {
+        document.getElementById('open').onclick = function () {
+            command.open()
+        }
+        document.getElementById('close').onclick = function () {
+            command.close()
+        }
+    }
+    setCommand(new Opt(Tv))
+</script>

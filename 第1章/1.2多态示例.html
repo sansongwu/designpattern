@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var makeSound = function (annimal) {
+        if(annimal instanceof Duck){
+            console.log("gagaga")
+        }else if(annimal instanceof Chicken){
+            console.log("gegege")
+        }
+    }
+    var Duck = function () {}
+    var Chicken = function () {}
+    var a = new Duck()
+    var b = new Chicken()
+    //makeSound(a)
+    //makeSound(b)
+
+    /*如果有一天 多了一只狗 怎么办？
+    * 将不变的 与 可能改变的事   分离开*/
+    var makeSound2 = function (annimal) {
+        annimal.sound()
+    }
+    var Duck2 = function () {}
+    Duck2.prototype.sound = function () {
+        console.log("gegege")
+    }
+    var Dog = function () {}
+    Dog.prototype.sound = function () {
+        console.log("wangwangwang")
+    }
+    makeSound2(new Duck2())
+    makeSound2(new Dog())
+</script>

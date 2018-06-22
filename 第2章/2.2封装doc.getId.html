@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="div">
+        我是一个div
+    </div>
+</body>
+</html>
+<script>
+    //var getId = document.getElementById;
+    //var div = getId("div")
+
+    document.getElementById = (function (fun) {
+        return function () {
+            return fun.apply(document,arguments)
+        }
+    })(document.getElementById)
+
+    var getId = document.getElementById;
+    var div = getId("div")
+    console.log(div.id)
+
+
+</script>

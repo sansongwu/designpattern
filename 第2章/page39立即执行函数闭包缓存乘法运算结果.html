@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    /*不创建闭包的情况*/
+    /*var obj = {}
+    var mult = function () {
+        var str = Array.prototype.join.call(arguments,',')
+        if(str in obj){
+            return obj[str]
+        }
+        var a = 1
+        for(var i = 0 ; i < arguments.length ; i++){
+            a = a * arguments[i]
+        }
+        console.log('函数结束')
+        obj[str] = a
+        return a
+    }
+    console.log(mult(2,3,4))*/
+
+    /*创建闭包的情况*/
+    var mult = (function () {
+        var obj = {}
+        /*执行顺序没有问题 console貌似最后点开的时候 obj是什么值 就是什么值？*/
+        console.log(obj)
+        return function () {
+            var str = Array.prototype.join.call(arguments,',')
+            if(str in obj){
+                console.log('提取了缓存内容')
+                return obj[str]
+            }
+            var a = 1
+            for(var i = 0 ; i < arguments.length ; i++){
+                a = a * arguments[i]
+            }
+
+            return obj[str] = a
+        }
+    })()
+    console.log(mult(2,3,4))
+    console.log(mult(3,3,4))
+    console.log(mult(2,3,4))
+</script>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var Singleton = function (name) {
+        this.name = name
+        this.instance = null
+    }
+
+    Singleton.prototype.getName = function () {
+        console.log(this.name)
+    }
+    /*这种定义方法的方式 不清楚算什么  确定的是  与放在构造函数中 this.定义 不一样*/
+    Singleton.getInstance = function (name) {
+        if(!this.instance){
+            this.instance = new Singleton(name)
+        }
+        return this.instance
+    }
+    var a = Singleton.getInstance('seven1')
+    var b = Singleton.getInstance('seven2')
+
+    console.log(a===b)
+
+</script>
