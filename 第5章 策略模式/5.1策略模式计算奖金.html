@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    /*封装策略类*/
+    var PerformanceS = function () {}
+    PerformanceS.prototype.calculate = function (salary) {
+        return salary*4
+    }
+    var PerformanceA = function () {}
+    PerformanceA.prototype.calculate = function (salary) {
+        return salary*3
+    }
+    var PerformanceB = function () {}
+    PerformanceB.prototype.calculate = function (salary) {
+        return salary*2
+    }
+
+    /*定义奖金类*/
+    var Bunos = function () {
+        this.salary = null
+        this.calculation = null
+    }
+    Bunos.prototype.setSalary = function (salary) {
+        this.salary = salary
+    }
+    Bunos.prototype.setCalculate = function (calculation) {
+        this.calculation = calculation
+    }
+    Bunos.prototype.getBunos = function () {
+        return this.calculation.calculate(this.salary)
+    }
+
+    var a = new Bunos()
+    a.setSalary('4000')
+    a.setCalculate(new PerformanceB)
+    console.log(a.getBunos())
+</script>

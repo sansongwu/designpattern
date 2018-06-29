@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>
+<script>
+    var calculate = {
+        'S':function (salary) {
+            return salary*4
+        },
+        'A':function (salary) {
+            return salary*3
+        },
+        'B':function (salary) {
+            return salary*2
+        }
+    }
+    var bunos = function (level,salary) {
+        return calculate[level](salary)
+    }
+    console.log(bunos('S','4000'))
+</script>
