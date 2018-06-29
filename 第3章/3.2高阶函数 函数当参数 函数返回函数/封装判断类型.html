@@ -8,3 +8,31 @@
 
 </body>
 </html>
+<script>
+    /*一般情况下*/
+    function obj(obj) {
+        return Object.prototype.toString.call(obj) === '[object Object]'
+    }
+    function isArr(obj) {
+        return Object.prototype.toString.call(obj) === '[object Array]'
+    }
+    var objtest = {}
+    var arr = []
+    console.log(obj(objtest))
+    console.log(isArr(arr))
+
+
+    /*封装后的*/
+    console.log('--------------割一下------------')
+    function type(istype) {
+        return function (tar) {
+            return Object.prototype.toString.call(tar) === '[object '+istype+']'
+        }
+    }
+    var isType = {}
+    isType.isObj = type('Object')
+    isType.isArr = type('Array')
+    isType.isStr = type('String')
+    var str = 'nihao'
+    console.log(isType.isStr(str))
+</script>
